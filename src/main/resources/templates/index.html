@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Home</title>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 90%;
+            margin-top: 60px;
+        }
+
+        .card {
+            position: relative;
+            width: 45%;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover .card-content {
+            transform: translateY(-50%);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .card a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #333;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card a:hover {
+            transform: scale(1.1);
+            background-color: #333;
+            color: #fff;
+        }
+
+        @media screen and (max-width: 768px) {
+            .card {
+                width: 100%;
+            }
+            .card-content {
+                position: initial;
+                transform: none;
+            }
+            .card h3 {
+                font-size: 20px;
+            }
+            .card img {
+                height: 160px;
+            }
+            .container {
+                margin-top: 20px;
+            }
+            .card:hover .card-content {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav th:fragment="nav" class="nav">
+        <div class="select">
+            <a href="#" class="link color-main dropdown-toggle" id="navigation_2_dropdown_1">Select</a>
+            <div class="dropdown-menu">
+                <a th:href="@{'/'}" class="dropdown-item home-item">Home</a>
+                <br>
+                <a th:href="@{'/movies/list'}" class="dropdown-item movie-item">Movie List</a>
+                <br>
+                <a th:href="@{'/spectacles/list'}" class="dropdown-item theater-item">Theater List</a>
+                <br>
+                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="dropdown-item theater-item" th:href="@{'/movies/showForm'}">Add Movies</a>
+                <br>
+               <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" class="dropdown-item theater-item" th:href="@{'/spectacles/showForm'}">Add a show</a>
+            </div>
+        </div>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M18.6,6.62C17.16,6.62 15.8,7.18 14.83,8.15L7.8,14.39C7.16,15.03 6.31,15.38 5.4,15.38C3.53,15.38 2,13.87 2,12C2,10.13 3.53,8.62 5.4,8.62C6.31,8.62 7.16,8.97 7.84,9.65L8.97,10.65L10.5,9.31L9.22,8.2C8.2,7.18 6.84,6.62 5.4,6.62C2.42,6.62 0,9.04 0,12C0,14.96 2.42,17.38 5.4,17.38C6.84,17.38 8.2,16.82 9.17,15.85L16.2,9.61C16.84,8.97 17.69,8.62 18.6,8.62C20.47,8.62 22,10.13 22,12C22,13.87 20.47,15.38 18.6,15.38C17.7,15.38 16.84,15.03 16.16,14.35L15,13.34L13.5,14.68L14.78,15.8C15.8,16.81 17.15,17.37 18.6,17.37C21.58,17.37 24,14.96 24,12C24,9 21.58,6.62 18.6,6.62Z"></path>
+            </svg>
+        </div>
+        <div class="login">
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}"><button class="btn btn-primary">Login</button></a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/register}"><button class="btn btn-secondary">Signup</button></a>
+            <button sec:authorize="isAuthenticated()" class="btn btn-secondary"> <a sec:authorize="isAuthenticated()" href="#" id="navbarDropdown" role="button"
+                                                                                    sec:authentication="name">
+            </a></button>
+            <a  sec:authorize="isAuthenticated()" id="logoutNavbarDropdown" th:href="@{/logout}"><button class="btn btn-secondary">Log out</button></a>
+        </div>
+    </nav>
+    <div class="particles-background" style="position: fixed;width: 100%;height: 100%;z-index: -1;" id="particles-js"></div>
+    <section class="Am-img-slider-container">
+        <div class="swiper blog-slider">
+            <div class="swiper-wrapper">
+                <!-- slide -->
+                <div class="swiper-slide">
+                    <div class="blog-slider__imgs">
+
+                        <img class="back-image" alt=""
+                             src="https://m.media-amazon.com/images/M/MV5BNzZhZjJlNzMtZmVlNi00MTIxLTg3OTMtMTI2NTVkYWQ4NDQyXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" />
+                        <div class="movie-image-container">
+
+                            <img class="movie-image  blog-slider__img" alt=""
+                                 src="https://m.media-amazon.com/images/M/MV5BNzZhZjJlNzMtZmVlNi00MTIxLTg3OTMtMTI2NTVkYWQ4NDQyXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" />
+                            <div class="overly">
+                                <a href="#" title="-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82z" />
+                                    </svg>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-slider__content">
+                        <h2 class="blog-slider__title">
+                            REVENGE 2017
+                        </h2>
+                        <p class="blog-slider__text">
+                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Doloremque magni quis repellat
+                            eaque fuga fugit, obcaecati ipsum odit ipsa saepe dere.
+                        </p>
+                        <span class="blog-slider__rate">
+                            IMDB 6.5/10
+                        </span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="blog-slider__imgs">
+                        <img class="back-image" alt=""
+                             src="https://upload.wikimedia.org/wikipedia/en/a/a9/EndlessLove2014Poster.jpg" />
+                        <div class="movie-image-container">
+
+                            <img class="movie-image  blog-slider__img" alt=""
+                                 src="https://upload.wikimedia.org/wikipedia/en/a/a9/EndlessLove2014Poster.jpg" />
+                            <div class="overly">
+                                <a href="#" title="-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82z" />
+                                    </svg>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-slider__content">
+                        <h2 class="blog-slider__title">
+                            Endless Love 2014
+                        </h2>
+                        <p class="blog-slider__text">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque, illum odit? Odit ipsum enim
+                            sapiente eius, ad numqure.
+                        </p>
+                        <span class="blog-slider__rate">
+                            IMDB 7.5/10
+                        </span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="blog-slider__imgs">
+                        <img class="back-image" alt=""
+                             src="https://s3.amazonaws.com/static.rogerebert.com/uploads/movie/movie_poster/endless-2020/large_endless-poster.jpg" />
+                        <div class="movie-image-container">
+
+                            <img class="movie-image  blog-slider__img" alt=""
+                                 src="https://s3.amazonaws.com/static.rogerebert.com/uploads/movie/movie_poster/endless-2020/large_endless-poster.jpg" />
+                            <div class="overly">
+                                <a href="#" title="-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82z" />
+                                    </svg>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-slider__content">
+                        <h2 class="blog-slider__title">
+                            endless 2020
+                        </h2>
+                        <p class="blog-slider__text">
+
+                            Lorem ipsum dolor, sit amet consm dolor, sit amet consectetur adipisilo natus.ectetur
+                            adipisilo natus.
+                        </p>
+                        <span class="blog-slider__rate">
+                            IMDB 3.7/10
+                        </span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="blog-slider__imgs">
+                        <img class="back-image" alt="" src="https://flxt.tmsimg.com/assets/p16919037_p_v8_aa.jpg" />
+                        <div class="movie-image-container">
+
+                            <img class="movie-image  blog-slider__img" alt=""
+                                 src="https://flxt.tmsimg.com/assets/p16919037_p_v8_aa.jpg" />
+                            <div class="overly">
+                                <a href="#" title="-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82z" />
+                                    </svg>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-slider__content">
+                        <h2 class="blog-slider__title">
+                            Underwater 2020
+                        </h2>
+                        <p class="blog-slider__text">
+
+                            Lorem ipsum dolor, sit amet consm dolor, sit amet consectetur adipisilo natus.ectetur
+                            adipisilo natus.
+                        </p>
+                        <span class="blog-slider__rate">
+                            IMDB 3.7/10
+                        </span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="blog-slider__imgs">
+                        <img class="back-image  blog-slider__backimg" alt=""
+                             src="https://www.brhspawprint.com/wp-content/uploads/2020/10/61idSH9iPTL._AC_SY741_.jpg" />
+                        <div class="movie-image-container">
+
+                            <img class="movie-image  blog-slider__img" alt=""
+                                 src="https://www.brhspawprint.com/wp-content/uploads/2020/10/61idSH9iPTL._AC_SY741_.jpg" />
+                            <div class="overly">
+                                <a href="#" title="-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                         preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82z" />
+                                    </svg>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="blog-slider__content">
+                        <h2 class="blog-slider__title">
+                            Mulan 2020
+                        </h2>
+                        <p class="blog-slider__text">
+
+                            Lorem ipsum dolor, sit amet consm dolor, sit amet consectetur adipisilo natus.ectetur
+                            adipisilo natus.
+                        </p>
+                        <span class="blog-slider__rate">
+                            IMDB 3.7/10
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    <div class="container">
+        <div class="card">
+            <img src="/images/21.jpg" alt="movie image">
+            <div class="card-content">
+                <h3>Book your movie tickets now at a nearby theater.</h3>
+                <a th:href="@{'/movies/list'}">View Movies</a>
+            </div>
+        </div>
+        <div class="card">
+            <img src="/images/12.jpg" alt="theater image">
+            <div class="card-content">
+                <h3>Find a theater near you and book your tickets.</h3>
+                <a th:href="@{'/spectacles/list'}">View Theaters</a>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script th:src="@{/js/particles.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+<script>
+    $('#navigation_2_dropdown_1').on("click", function(){
+        $('.dropdown-menu').toggleClass("active");
+    });
+
+    $('.dropdown-menu div div').on('click' , function(){	$('#navigation_2_dropdown_1').text($(this).text());
+        $('.dropdown-menu').toggleClass("active");
+    })
+</script>
+<script>
+    var swiper = new Swiper(".blog-slider", {
+        loop: true,
+        slidesPerView: "1",
+        speed: 500,
+        effect: "coverflow",
+        coverflowEffect: {
+            slideShadows: false,
+        },
+        mousewheel: {
+            invert: false,
+        },
+        autoplay: {
+            delay: 3000,
+        },
+        breakpoints: {
+            0: {
+                effect: "slide",
+                centeredSlides: false,
+            },
+            768: {
+                slidesPerView: "2",
+                centeredSlides: true,
+            },
+            1200: {
+                slidesPerView: "3",
+                centeredSlides: true,
+            }
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+            type: "fraction"
+        },
+
+    });
+
+</script>
+
+</html>
